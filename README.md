@@ -1,34 +1,35 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🪝 Hook-Watch | Phishing Awareness Dashboard
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
-First, run the development server:
+**Hook-Watch** es una herramienta avanzada de simulación de phishing diseñada para auditorías de seguridad y concienciación. Permite gestionar objetivos, lanzar campañas realistas y monitorizar resultados en tiempo real.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## 🚀 Características Principales
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **📊 Dashboard en Tiempo Real:** Visualización de métricas de riesgo y eventos de clic.
+* **📧 Motor de Envío:** Integración con Gmail para el envío de plantillas personalizadas (Finanzas, Seguridad, etc.).
+* **📱 Diseño Responsivo:** Optimizado para dispositivos móviles para auditorías en cualquier lugar [cite: 2026-02-01].
+* **🔗 Tracking Inteligente:** Seguimiento individualizado de objetivos mediante rutas dinámicas `/l/[id]`.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Stack Tecnológico
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+* **Frontend:** Next.js con TypeScript.
+* **Estilos:** Tailwind CSS (Dark Mode nativo).
+* **Base de Datos:** Supabase (PostgreSQL).
+* **Correo:** Nodemailer con transporte de Gmail.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## ⚙️ Configuración
 
-## Learn More
+Para ejecutar este proyecto en local o desplegarlo, necesitas configurar las siguientes variables de entorno:
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Descripción |
+| :--- | :--- |
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de tu proyecto en Supabase |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave anónima de Supabase |
+| `GMAIL_USER` | Cuenta de correo emisora |
+| `GMAIL_APP_PASSWORD` | Contraseña de aplicación de Google |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+---
+*Desarrollado con fines educativos y de auditoría de seguridad.*
