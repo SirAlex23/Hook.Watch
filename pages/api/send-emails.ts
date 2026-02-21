@@ -1,26 +1,40 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import nodemailer from 'nodemailer';
+import { supabase } from '../../lib/supabase'; // Asegúrate de que la ruta sea correcta
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ message: 'Method not allowed' });
 
+  // 1. Parsear los datos del cuerpo
   const { to, targetName, companyName, template, link, adminEmail } = JSON.parse(req.body);
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user:  process.env.GMAIL_USER,
-      pass:  process.env.GMAIL_APP_PASSWORD,
-    }
-  });
-
   try {
+    // 2. BUSCAR CREDENCIALES EN SUPABASE (Prioridad)
+    // Buscamos en la tabla user_settings usando el adminEmail
+    const { data: settings } = await supabase
+      .from('user_settings')
+      .select('gmail_app_password')
+      .eq('gmail_user', adminEmail)
+      .single();
+
+    const password = settings?.gmail_app_password || process.env.GMAIL_APP_PASSWORD;
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: adminEmail, // Usamos el email que viene del dashboard
+        pass: password, // La clave de la DB o del .env
+      }
+    });
+
+    // 3. INICIALIZAR VARIABLES (Para evitar el error de la imagen)
     let subject = "";
     let contentTitle = "";
     let contentBody = "";
     let buttonText = "";
     let bannerColor = "#2563eb"; 
 
+    // 4. TUS PLANTILLAS (Mantenidas exactamente igual)
     switch (template) {
       case 'SEGURIDAD':
         subject = `[Acción Requerida] Actividad de inicio de sesión inusual en ${companyName}`;
@@ -43,25 +57,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         contentBody = `Se han actualizado las políticas de teletrabajo y vacaciones para el año 2026. Es obligatorio que todos los empleados confirmen la recepción de este documento.`;
         buttonText = "Firmar Documento";
         break;
+      case 'IT_SUPPORT':
+        subject = `[SOPORTE IT] Cambio de contraseña obligatorio para ${companyName}`;
+        bannerColor = "#475569";
+        contentTitle = "Acción Requerida: Seguridad IT";
+        contentBody = `Nuestra política de seguridad requiere que actualice su contraseña cada 90 días. Su sesión actual caducará en 2 horas si no se realiza la validación de credenciales.`;
+        buttonText = "Validar Mi Cuenta Ahora";
+        break;
+      case 'BENEFICIOS':
+        subject = `¡Enhorabuena! Has recibido un Bono de Recompensa - ${companyName}`;
+        bannerColor = "#f59e0b";
+        contentTitle = "Reconocimiento al Empleado";
+        contentBody = `Gracias a tu excelente desempeño este trimestre, se te ha asignado una tarjeta regalo electrónica. Haz clic abajo para canjear tu código y ver los detalles del beneficio.`;
+        buttonText = "Canjear Mi Bono";
+        break;
       default:
         subject = `Notificación del Sistema - ${companyName}`;
         contentTitle = "Aviso Pendiente";
         contentBody = `Tiene un mensaje importante en su bandeja de entrada corporativa que requiere su atención inmediata.`;
         buttonText = "Acceder al Portal";
-        case 'IT_SUPPORT':
-  subject = `[SOPORTE IT] Cambio de contraseña obligatorio para ${companyName}`;
-  bannerColor = "#475569"; // Gris azulado (serio)
-  contentTitle = "Acción Requerida: Seguridad IT";
-  contentBody = `Nuestra política de seguridad requiere que actualice su contraseña cada 90 días. Su sesión actual caducará en 2 horas si no se realiza la validación de credenciales.`;
-  buttonText = "Validar Mi Cuenta Ahora";
-  break;
-case 'BENEFICIOS':
-  subject = `¡Enhorabuena! Has recibido un Bono de Recompensa - ${companyName}`;
-  bannerColor = "#f59e0b"; // Ámbar/Oro (atractivo)
-  contentTitle = "Reconocimiento al Empleado";
-  contentBody = `Gracias a tu excelente desempeño este trimestre, se te ha asignado una tarjeta regalo electrónica. Haz clic abajo para canjear tu código y ver los detalles del beneficio.`;
-  buttonText = "Canjear Mi Bono";
-  break;
+        break;
     }
 
     const htmlLayout = `
@@ -92,16 +107,18 @@ case 'BENEFICIOS':
       </div>
     `;
 
+    // 5. ENVÍO FINAL
     await transporter.sendMail({
-      from: `"${companyName} Support" <alejandrocrespocorrea@gmail.com>`,
+      from: `"${companyName} Support" <${adminEmail}>`,
       to: to,
       subject: subject,
       html: htmlLayout,
     });
 
+    // Notificación al Admin (Opcional)
     if (adminEmail) {
       await transporter.sendMail({
-        from: '"HOOK.WATCH System" <alejandrocrespocorrea@gmail.com>',
+        from: '"HOOK.WATCH System" <no-reply@hook.watch>',
         to: adminEmail,
         subject: `🚀 Ataque enviado: ${targetName}`,
         html: `<p>El sistema ha procesado el envío para <strong>${to}</strong> con la plantilla de <strong>${template}</strong>.</p>`
@@ -110,10 +127,7 @@ case 'BENEFICIOS':
 
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error(error);
+    console.error("Error en send-emails:", error);
     return res.status(500).json({ error: 'Error en el servidor de correo' });
   }
 }
-
-
-
