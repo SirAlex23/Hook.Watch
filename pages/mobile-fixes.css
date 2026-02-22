@@ -1,0 +1,51 @@
+/* SOLUCIONES ESPECÍFICAS PARA MÓVIL (Max 768px) */
+@media (max-width: 768px) {
+  
+    /* 1. Ajuste del Header: Ponemos el título arriba y los botones debajo */
+    header.flex.items-center.justify-between {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+    }
+  
+    /* 2. Reducción de rellenos en secciones para ganar espacio lateral */
+    .bg-\[\#16181d\] {
+      padding: 1.5rem !important;
+      border-radius: 1.5rem !important;
+    }
+  
+    /* 3. Ajuste de Inputs: El texto no se cortará */
+    input {
+      padding: 0.8rem 1rem !important;
+      font-size: 13px !important;
+    }
+  
+    /* 4. Dashboard: Tarjetas más compactas */
+    .grid-cols-1 .bg-\[\#16181d\] {
+      padding: 1.2rem !important;
+    }
+  
+    /* 5. Botones gigantes: Los hacemos más manejables */
+    button.py-5, button.py-4 {
+      padding-top: 1rem !important;
+      padding-bottom: 1rem !important;
+    }
+  
+    /* 6. Tabs (Estrategia/Objetivos): Que ocupen el ancho completo */
+    header .flex.bg-white\/5 {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    header .flex.bg-white\/5 button {
+      flex: 1;
+      text-align: center;
+    }
+  
+    /* 7. Modal de Ayuda: Aseguramos que no se salga */
+    .fixed.inset-0 .max-w-lg {
+      margin: 1rem;
+      padding: 1.5rem !important;
+    }
+  }
+  
