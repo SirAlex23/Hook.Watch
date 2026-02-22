@@ -1,51 +1,79 @@
-/* SOLUCIONES ESPECÍFICAS PARA MÓVIL (Max 768px) */
-@media (max-width: 768px) {
+/* =======================================================
+   HOOK.WATCH - MOBILE OVERRIDES (Max 768px)
+   ======================================================= */
+
+   @media (max-width: 768px) {
   
-    /* 1. Ajuste del Header: Ponemos el título arriba y los botones debajo */
+    /* 1. ESTRUCTURA Y HEADERS */
+    /* Evita que el título y los botones choquen en Ajustes y Dashboard */
     header.flex.items-center.justify-between {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.5rem;
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 1.2rem !important;
+      padding-bottom: 1rem;
     }
   
-    /* 2. Reducción de rellenos en secciones para ganar espacio lateral */
-    .bg-\[\#16181d\] {
-      padding: 1.5rem !important;
-      border-radius: 1.5rem !important;
-    }
-  
-    /* 3. Ajuste de Inputs: El texto no se cortará */
-    input {
-      padding: 0.8rem 1rem !important;
-      font-size: 13px !important;
-    }
-  
-    /* 4. Dashboard: Tarjetas más compactas */
-    .grid-cols-1 .bg-\[\#16181d\] {
+    /* 2. DASHBOARD Y CARDS */
+    /* Reducimos el padding excesivo para ganar espacio en pantalla estrecha */
+    .bg-\[\#16181d\], .bg-gray-900 {
       padding: 1.2rem !important;
+      border-radius: 1.2rem !important;
     }
   
-    /* 5. Botones gigantes: Los hacemos más manejables */
-    button.py-5, button.py-4 {
-      padding-top: 1rem !important;
-      padding-bottom: 1rem !important;
+    /* 3. LOGIN & REGISTER (Iconos corregidos) */
+    /* El sobre y el candado ya no flotan sobre el texto */
+    .relative svg {
+      position: absolute !important;
+      left: 12px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      z-index: 10 !important;
+      pointer-events: none;
     }
   
-    /* 6. Tabs (Estrategia/Objetivos): Que ocupen el ancho completo */
-    header .flex.bg-white\/5 {
+    /* Espacio interno para que el texto no pise al icono */
+    .relative input {
+      padding-left: 3.2rem !important;
+      font-size: 14px !important;
+    }
+  
+    /* 4. BOTONES (Músculo y usabilidad) */
+    /* Botón "Registrar Objetivo" y "Guardar" con más presencia */
+    button.w-full.bg-white.text-black, 
+    button.bg-emerald-500,
+    .bg-white.text-black.py-2 {
+      padding-top: 0.9rem !important;
+      padding-bottom: 0.9rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.03em !important;
+      text-transform: uppercase !important;
+    }
+  
+    /* 5. SECCIÓN DE AJUSTES (Inputs de estrategia) */
+    /* Evita que los placeholders se corten */
+    input::placeholder {
+      font-size: 12px !important;
+    }
+  
+    /* Tabs de Estrategia/Objetivos ocupando todo el ancho */
+    .flex.bg-white\/5.p-1 {
       width: 100%;
-      justify-content: space-between;
+      display: flex;
     }
-    
-    header .flex.bg-white\/5 button {
+  
+    .flex.bg-white\/5.p-1 button {
       flex: 1;
       text-align: center;
+      font-size: 11px !important;
     }
   
-    /* 7. Modal de Ayuda: Aseguramos que no se salga */
+    /* 6. MODAL DE AYUDA */
+    /* Asegura que el modal de Gmail no se desborde */
     .fixed.inset-0 .max-w-lg {
-      margin: 1rem;
+      margin: 1rem !important;
       padding: 1.5rem !important;
+      max-height: 90vh;
+      overflow-y: auto;
     }
   }
   
