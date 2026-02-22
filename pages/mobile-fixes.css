@@ -1,79 +1,53 @@
 /* =======================================================
-   HOOK.WATCH - MOBILE OVERRIDES (Max 768px)
+   HOOK.WATCH - MOBILE SAFE FIXES 
    ======================================================= */
 
    @media (max-width: 768px) {
   
-    /* 1. ESTRUCTURA Y HEADERS */
-    /* Evita que el título y los botones choquen en Ajustes y Dashboard */
-    header.flex.items-center.justify-between {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 1.2rem !important;
-      padding-bottom: 1rem;
-    }
-  
-    /* 2. DASHBOARD Y CARDS */
-    /* Reducimos el padding excesivo para ganar espacio en pantalla estrecha */
-    .bg-\[\#16181d\], .bg-gray-900 {
-      padding: 1.2rem !important;
-      border-radius: 1.2rem !important;
-    }
-  
-    /* 3. LOGIN & REGISTER (Iconos corregidos) */
-    /* El sobre y el candado ya no flotan sobre el texto */
-    .relative svg {
+    /* ARREGLO DE ICONOS EN LOGIN (Solo afecta al Login) */
+    /* Usamos selectores más específicos para no romper el resto de la web */
+    .relative.mb-4 svg, .relative.mb-6 svg {
       position: absolute !important;
       left: 12px !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
       z-index: 10 !important;
-      pointer-events: none;
     }
   
-    /* Espacio interno para que el texto no pise al icono */
-    .relative input {
-      padding-left: 3.2rem !important;
-      font-size: 14px !important;
+    .relative.mb-4 input, .relative.mb-6 input {
+      padding-left: 3rem !important;
     }
   
-    /* 4. BOTONES (Músculo y usabilidad) */
-    /* Botón "Registrar Objetivo" y "Guardar" con más presencia */
-    button.w-full.bg-white.text-black, 
-    button.bg-emerald-500,
-    .bg-white.text-black.py-2 {
-      padding-top: 0.9rem !important;
-      padding-bottom: 0.9rem !important;
+    /* BOTÓN REGISTRAR OBJETIVO (Darle "músculo") */
+    /* Buscamos específicamente el botón dentro del card de objetivos */
+    button.w-full.bg-white.text-black.py-2.rounded-xl {
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
       font-weight: 800 !important;
-      letter-spacing: 0.03em !important;
-      text-transform: uppercase !important;
-    }
-  
-    /* 5. SECCIÓN DE AJUSTES (Inputs de estrategia) */
-    /* Evita que los placeholders se corten */
-    input::placeholder {
-      font-size: 12px !important;
-    }
-  
-    /* Tabs de Estrategia/Objetivos ocupando todo el ancho */
-    .flex.bg-white\/5.p-1 {
-      width: 100%;
-      display: flex;
-    }
-  
-    .flex.bg-white\/5.p-1 button {
-      flex: 1;
-      text-align: center;
       font-size: 11px !important;
+      letter-spacing: 0.05em !important;
     }
   
-    /* 6. MODAL DE AYUDA */
-    /* Asegura que el modal de Gmail no se desborde */
-    .fixed.inset-0 .max-w-lg {
-      margin: 1rem !important;
+    /* AJUSTE DE CABECERAS (Para que no choquen los botones) */
+    header.flex.justify-between.items-center {
+      flex-direction: column !important;
+      gap: 1rem !important;
+      align-items: flex-start !important;
+    }
+  
+    /* PROTECCIÓN DEL TUTORIAL (MODAL DE AYUDA) */
+    /* Resetamos los valores que rompieron el tutorial antes */
+    .fixed.inset-0.z-50 .bg-white\/10 {
+      max-height: none !important;
+      overflow-y: visible !important;
+      margin: 0 !important;
+    }
+    
+    /* Aseguramos que el contenido del modal de ayuda sea legible */
+    .max-w-md.w-full.bg-black {
+      width: 90% !important;
+      margin: auto !important;
       padding: 1.5rem !important;
-      max-height: 90vh;
-      overflow-y: auto;
     }
   }
   
