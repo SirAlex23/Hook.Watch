@@ -121,7 +121,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         from: '"HOOK.WATCH System" <no-reply@hook.watch>',
         to: adminEmail,
         subject: `🚀 Ataque enviado: ${targetName}`,
-        html: `<p>El sistema ha procesado el envío para <strong>${to}</strong> con la plantilla de <strong>${template}</strong>.</p>`
+        html: `<p>El sistema ha procesado el envío para <strong>${to}</strong> con la plantilla de <strong>${template}</strong>. Monitorize el dashboard de <strong>Hook.Watch</strong> para hacer un seguimiento de su ataque</p>`
       });
     }
 

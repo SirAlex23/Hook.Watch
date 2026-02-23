@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [attackSelection, setAttackSelection] = useState<'PHISHING' | 'ALEATORIO' | null>(null);
   const [loading, setLoading] = useState(false);
   const [victimCount, setVictimCount] = useState(0);
+  const [totalClicks, setTotalClicks] = useState(0); // Para el riesgo real
   const [userId, setUserId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -28,6 +29,7 @@ export default function Dashboard() {
     if (userId) {
       fetchOperations();
       fetchVictimCount();
+      fetchTotalClicks(); // Nueva función
       const sub = supabase.channel('any').on('postgres_changes', { 
         event: '*', 
         schema: 'public', 
@@ -36,6 +38,7 @@ export default function Dashboard() {
       }, () => {
         if (selectedOp) fetchDetails(selectedOp.id);
         fetchOperations();
+        fetchTotalClicks();
       }).subscribe();
       return () => { supabase.removeChannel(sub); };
     }
@@ -58,6 +61,12 @@ export default function Dashboard() {
   const fetchVictimCount = async () => {
     const { count } = await supabase.from('targets').select('*', { count: 'exact', head: true }).eq('user_id', userId);
     setVictimCount(count || 0);
+  };
+
+  // Calculamos cuántos clics totales hay en todas las campañas
+  const fetchTotalClicks = async () => {
+    const { data } = await supabase.from('operation_results').select('has_clicked').eq('user_id', userId).eq('has_clicked', true);
+    setTotalClicks(data?.length || 0);
   };
 
   const fetchDetails = async (opId: string) => {
@@ -116,12 +125,17 @@ export default function Dashboard() {
     setIsCampaignMode(false);
     fetchOperations();
     setLoading(false);
+    // AVISO SOLICITADO
+    alert("🚀 ¡Ataque enviado! Mantente atento al Dashboard para seguir el rastro de tus objetivos en tiempo real.");
   };
 
   const deleteOp = async (id: string) => {
     await supabase.from('operations').delete().eq('id', id).eq('user_id', userId);
     fetchOperations();
   };
+
+  // Cálculo de porcentaje de riesgo
+  const riskPercent = victimCount > 0 ? Math.round((totalClicks / victimCount) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-[#0f1115] text-white p-6 md:p-12 font-sans selection:bg-emerald-500/30">
@@ -139,10 +153,17 @@ export default function Dashboard() {
           </Link>
         </header>
 
+        {/* STAT CARDS CON COLOR DINÁMICO */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <StatCard title="Riesgo Humano" value="64%" icon={<AlertTriangle className="text-red-500" />} />
+          <StatCard 
+            title="Riesgo Humano" 
+            value={`${riskPercent}%`} 
+            icon={<AlertTriangle />} 
+            isRisk={true} 
+            percent={riskPercent}
+          />
           <StatCard title="Objetivos" value={victimCount} icon={<Target className="text-blue-500" />} />
-          <StatCard title="Eventos" value={opDetails.filter(d => d.has_clicked).length} icon={<MousePointer2 className="text-emerald-500" />} />
+          <StatCard title="Eventos" value={totalClicks} icon={<MousePointer2 className="text-emerald-500" />} />
           <StatCard title="Campañas" value={operations.length} icon={<Shield className="text-purple-500" />} />
         </div>
 
@@ -255,12 +276,20 @@ export default function Dashboard() {
   );
 }
 
-function StatCard({ title, value, icon }: any) {
+function StatCard({ title, value, icon, isRisk, percent }: any) {
+  // Lógica de color dinámico
+  let colorClass = "text-white";
+  if (isRisk) {
+    if (percent < 30) colorClass = "text-emerald-500";
+    else if (percent < 60) colorClass = "text-orange-500";
+    else colorClass = "text-red-500";
+  }
+
   return (
     <div className="bg-[#16181d] border border-white/5 p-8 rounded-[2.5rem] group hover:border-white/10 transition-all">
-      <div className="mb-4 bg-white/5 w-fit p-3 rounded-2xl group-hover:scale-110 transition-transform">{icon}</div>
+      <div className={`mb-4 bg-white/5 w-fit p-3 rounded-2xl group-hover:scale-110 transition-transform ${isRisk ? colorClass : ''}`}>{icon}</div>
       <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">{title}</p>
-      <p className="text-4xl font-black italic tracking-tighter">{value}</p>
+      <p className={`text-4xl font-black italic tracking-tighter ${colorClass}`}>{value}</p>
     </div>
   );
 }
