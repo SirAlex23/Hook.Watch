@@ -29,7 +29,7 @@ export default function Dashboard() {
     if (userId) {
       fetchOperations();
       fetchVictimCount();
-      fetchTotalClicks(); // Nueva función
+      fetchTotalClicks(); 
       const sub = supabase.channel('any').on('postgres_changes', { 
         event: '*', 
         schema: 'public', 
@@ -63,7 +63,6 @@ export default function Dashboard() {
     setVictimCount(count || 0);
   };
 
-  // Calculamos cuántos clics totales hay en todas las campañas
   const fetchTotalClicks = async () => {
     const { data } = await supabase.from('operation_results').select('has_clicked').eq('user_id', userId).eq('has_clicked', true);
     setTotalClicks(data?.length || 0);
@@ -114,7 +113,8 @@ export default function Dashboard() {
               companyName: config.companyName || 'Empresa Privada',
               template: strategy,
               link: `${window.location.origin}/l/${res.id}`,
-              adminEmail: config.adminEmail
+              adminEmail: config.adminEmail,
+              userId: userId // <--- IMPORTANTE PARA EL MODO MULTIUSUARIO
             })
           });
         }
@@ -125,7 +125,6 @@ export default function Dashboard() {
     setIsCampaignMode(false);
     fetchOperations();
     setLoading(false);
-    // AVISO SOLICITADO
     alert("🚀 ¡Ataque enviado! Mantente atento al Dashboard para seguir el rastro de tus objetivos en tiempo real.");
   };
 
@@ -134,7 +133,6 @@ export default function Dashboard() {
     fetchOperations();
   };
 
-  // Cálculo de porcentaje de riesgo
   const riskPercent = victimCount > 0 ? Math.round((totalClicks / victimCount) * 100) : 0;
 
   return (
@@ -153,7 +151,6 @@ export default function Dashboard() {
           </Link>
         </header>
 
-        {/* STAT CARDS CON COLOR DINÁMICO */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           <StatCard 
             title="Riesgo Humano" 
@@ -277,7 +274,6 @@ export default function Dashboard() {
 }
 
 function StatCard({ title, value, icon, isRisk, percent }: any) {
-  // Lógica de color dinámico
   let colorClass = "text-white";
   if (isRisk) {
     if (percent < 30) colorClass = "text-emerald-500";
@@ -293,3 +289,4 @@ function StatCard({ title, value, icon, isRisk, percent }: any) {
     </div>
   );
 }
+
