@@ -200,11 +200,11 @@ export default function Settings() {
               </div>
               
               <div className="grid gap-4">
-                <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm font-bold outline-none focus:border-emerald-500" placeholder="Nombre de Empresa" />
+                <input type="text" value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-sm font-bold outline-none focus:border-emerald-500" placeholder="Empresa a suplantar durante el ataque (Ej:Microsft, Amazon o Entidad Propia)" />
                 
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/20" size={16} />
-                  <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 pl-12 text-sm font-bold outline-none focus:border-emerald-500" placeholder="Tu Gmail" />
+                  <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 pl-12 text-sm font-bold outline-none focus:border-emerald-500" placeholder="Tu Email para recibir los avisos de ataques." />
                 </div>
 
                 <div className="relative">
