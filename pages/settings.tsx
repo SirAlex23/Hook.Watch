@@ -42,12 +42,10 @@ export default function Settings() {
     if (saved) {
       const parsed = JSON.parse(saved);
       setCompanyName(parsed.companyName || '');
-      // El adminEmail lo priorizamos desde la DB en fetchSmtpSettings
       setEmailTpl(parsed.emailTpl || 'SEGURIDAD');
     }
   };
 
-  // 1. SINCRONIZACIÓN TOTAL: Traemos el email y la clave de la DB
   const fetchSmtpSettings = async (uid: string) => {
     const { data } = await supabase
       .from('user_settings')
@@ -75,7 +73,6 @@ export default function Settings() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  // 2. GUARDADO COMPLETO: Aseguramos que el email de la DB sea el que manda
   const saveConfig = async () => {
     if (!companyName || !adminEmail || !gmailPass) {
       showMsg('error', 'RELLENA TODOS LOS CAMPOS INCLUYENDO LA CLAVE');
@@ -87,11 +84,8 @@ export default function Settings() {
     }
 
     setLoading(true);
-    
-    // Guardamos configuración visual en local
     localStorage.setItem('hook_config', JSON.stringify({ companyName, adminEmail, emailTpl }));
 
-    // Guardamos credenciales críticas en Supabase (Multiusuario)
     const { error } = await supabase.from('user_settings').upsert({
       user_id: userId,
       gmail_user: adminEmail,
@@ -103,7 +97,6 @@ export default function Settings() {
 
     if (error) {
       showMsg('error', 'ERROR AL GUARDAR EN LA BASE DE DATOS');
-      console.error(error);
     } else {
       showMsg('success', 'ESTRATEGIA Y SMTP ACTUALIZADOS');
     }
@@ -153,7 +146,7 @@ export default function Settings() {
             </button>
             <div className="flex items-center gap-3 mb-6 text-emerald-500">
                 <AlertCircle size={20} />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em]">Tutorial SMTP Seguro</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em]">Tutorial para la clave de aplicación</h3>
             </div>
             <div className="space-y-6 text-[11px] font-bold uppercase tracking-widest leading-loose text-white/60">
                 <p><span className="text-emerald-500">01.</span> Entra en tu Cuenta de Google &gt; Seguridad.</p>
@@ -166,7 +159,6 @@ export default function Settings() {
       )}
 
       <div className="max-w-4xl mx-auto">
-        {/* MENSAJES DE ESTADO */}
         {msg.text && (
           <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-4 rounded-2xl border shadow-2xl flex items-center gap-3 animate-in slide-in-from-top ${msg.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
             <p className="text-[10px] font-black uppercase tracking-widest">{msg.text}</p>
@@ -194,9 +186,17 @@ export default function Settings() {
                   <Building2 size={16} />
                   <h2 className="text-[10px] font-black uppercase tracking-[0.2em]">Configuración SMTP</h2>
                 </div>
-                <button onClick={() => setShowHelp(true)} className="text-emerald-500/50 hover:text-emerald-500 transition-all">
-                    <HelpCircle size={18} />
-                </button>
+                
+                {/* TOOLTIP RECUPERADO AQUÍ */}
+                <div className="relative group">
+                  <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none whitespace-nowrap shadow-xl shadow-emerald-500/20">
+                    ¿Necesitas ayuda?
+                    <span className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-emerald-500"></span>
+                  </span>
+                  <button onClick={() => setShowHelp(true)} className="text-emerald-500/50 hover:text-emerald-500 transition-all p-2">
+                      <HelpCircle size={18} />
+                  </button>
+                </div>
               </div>
               
               <div className="grid gap-4">
@@ -260,4 +260,5 @@ export default function Settings() {
     </div>
   );
 }
+
 
