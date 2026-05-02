@@ -2,15 +2,31 @@ name: "Keep Supabase Alive"
 
 on:
   schedule:
-    # Se ejecuta todos los días a las 00:00 UTC para asegurar actividad constante
+    # Se ejecuta todos los días a las 00:00 UTC
     - cron: '0 0 * * *'
-  workflow_dispatch: # Esto permite que le des al botón manual en GitHub
+  workflow_dispatch: 
 
 jobs:
   ping_supabase:
     runs-on: ubuntu-latest
+    # Añadimos permisos para que el script pueda escribir el cambio de actividad
+    permissions:
+      contents: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Ping Database
         run: |
           curl -i -X GET "${{ secrets.SUPABASE_URL }}/rest/v1/?apikey=${{ secrets.SUPABASE_SERVICE_ROLE }}" \
           -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE }}"
+
+      # Este es el paso clave: crea o actualiza un archivo para que GitHub vea movimiento
+      - name: Keep Repo Active
+        run: |
+          date > last_heartbeat.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add last_heartbeat.txt
+          git commit -m "Keep-alive: periodic activity heartbeat" || exit 0
+          git push
